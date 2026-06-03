@@ -2,6 +2,14 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 
+const isProduction = process.env.NODE_ENV === 'production';
+// Dev note: Vercel frontend aur Render backend cross-site hote hain; production me SameSite=None refresh cookie ko allow karta hai.
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'strict'
+};
+
 // Generate Access Token (Short lived)
 const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -47,9 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Set refresh token in HTTP-only cookie
     res.cookie('jwt', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development', // Use secure cookies in production
-      sameSite: 'strict', // Prevent CSRF attacks
+      ...refreshCookieOptions,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -57,7 +63,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user.id,
       username: user.username,
       email: user.email,
-      password: user.password,
+      // Dev note: password hash response me bhejna security leak tha; auth ke liye accessToken enough hai.
       accessToken,
     });
   } else {
@@ -81,9 +87,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     // Set refresh token in HTTP-only cookie
     res.cookie('jwt', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      sameSite: 'strict',
+      ...refreshCookieOptions,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -91,7 +95,7 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user.id,
       username: user.username,
       email: user.email,
-      password: user.password,
+      // Dev note: password hash response me bhejna security leak tha; auth ke liye accessToken enough hai.
       accessToken,
     });
   } else {
@@ -140,7 +144,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   if (!cookies?.jwt) return res.sendStatus(204); // No content
 
   res.cookie('jwt', '', {
-    httpOnly: true,
+    ...refreshCookieOptions,
     expires: new Date(0),
   });
   

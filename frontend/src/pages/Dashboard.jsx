@@ -1063,11 +1063,10 @@ const Dashboard = () => {
                               <p><span className="font-semibold text-zinc-350">ID:</span> {user.id || user._id}</p>
                               <p><span className="font-semibold text-zinc-355">Username:</span> {user.username}</p>
                               <p><span className="font-semibold text-zinc-355">Email:</span> {user.email}</p>
+                              {/* Dev note: backend ab password hash nahi bhejta; profile me secret display karna production risk tha. */}
                               <p className="sm:col-span-2 break-all">
-                                <span className="font-semibold text-zinc-355">Hashed Secret:</span>{' '}
-                                <code className="bg-black border border-zinc-800 px-1.5 py-0.5 rounded text-[10px] text-zinc-400 font-mono select-all">
-                                  {user.password || 'Not available'}
-                                </code>
+                                <span className="font-semibold text-zinc-355">Password:</span>{' '}
+                                <span className="text-zinc-500">Hidden for security</span>
                               </p>
                             </div>
                           </div>

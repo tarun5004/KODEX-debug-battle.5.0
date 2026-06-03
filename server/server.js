@@ -11,10 +11,20 @@ connectDB();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const clientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173';
+const localClientUrl = 'http://localhost:5173';
+const allowedOrigins = [localClientUrl, process.env.CLIENT_URL, process.env.FRONTEND_URL]
+  .filter((origin, index, origins) => origin && origins.indexOf(origin) === index);
 
-// Dev note: local Vite aur deployed Vercel URL dono CORS me env se handle ho sakein, isliye CLIENT_URL use kiya.
-app.use(cors({ origin: clientUrl, credentials: true }));
+// Dev note: pehle CORS sirf ek origin allow kar raha tha; ab local Vite aur deployed CLIENT_URL dono safely allow hote hain.
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

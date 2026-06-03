@@ -112,11 +112,10 @@ const Profile = () => {
                     <p><span className="font-medium text-gray-900">ID:</span> {displayUser.id || displayUser._id}</p>
                     <p><span className="font-medium text-gray-900">Username:</span> {displayUser.username}</p>
                     <p><span className="font-medium text-gray-900">Email:</span> {displayUser.email}</p>
+                    {/* Dev note: password hash screen pe dikh raha tha; production me isko hidden rakhna hi safe hai. */}
                     <p className="sm:col-span-2 break-all">
-                      <span className="font-medium text-gray-900">Password Hash:</span>{' '}
-                      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs text-red-600 select-all font-mono">
-                        {displayUser.password || 'Not available'}
-                      </code>
+                      <span className="font-medium text-gray-900">Password:</span>{' '}
+                      <span className="text-gray-500">Hidden for security</span>
                     </p>
                   </div>
                 </div>

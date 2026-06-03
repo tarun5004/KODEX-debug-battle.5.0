@@ -12,7 +12,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5001',
+        // Dev note: backend default PORT 5000 hai; 5001 proxy stale tha aur relative /api calls ko wrong server pe bhej sakta tha.
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },

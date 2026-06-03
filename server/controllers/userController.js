@@ -11,7 +11,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       id: user._id,
       username: user.username,
       email: user.email,
-      password: user.password, // Included only because of the user's specific frontend request
+      // Dev note: profile API se password hash hata diya; browser ko sirf identity/profile data chahiye.
       profile: user.profile
     });
   } else {
@@ -41,7 +41,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       id: updatedUser._id,
       username: updatedUser.username,
       email: updatedUser.email,
-      password: updatedUser.password, // Included only because of previous requirement
+      // Dev note: update response me bhi password hash nahi bhejna; warna profile save ke baad leak wapas aa jata.
       profile: updatedUser.profile
     });
   } else {
