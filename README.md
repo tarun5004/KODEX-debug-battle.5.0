@@ -314,6 +314,38 @@ Files touched:
 - `frontend/src/pages/Register.jsx`
 - `frontend/src/pages/Login.jsx`
 
+### 21. Login/register redirected back to login
+
+Live backend register response showed this body:
+
+```json
+{"message":"secretOrPrivateKey must have a value","stack":null}
+```
+
+The backend was returning that error with HTTP `200`, so the frontend treated it like a successful register/login response. Since `accessToken` was missing, the app navigated to `/profile`, protected API calls failed with `401`, and the Axios refresh flow sent the user back to `/login`.
+
+Fix:
+
+- Error middleware now converts normal errors without a 4xx/5xx status into HTTP `500`.
+- Auth controller checks `JWT_SECRET` and `JWT_REFRESH_SECRET` before creating users or generating tokens.
+- Frontend login/register now refuses to navigate if the backend response does not include `accessToken`.
+- Login/register pages now show thrown frontend errors too, not only Axios response errors.
+
+Files touched:
+
+- `server/middleware/errorMiddleware.js`
+- `server/controllers/authController.js`
+- `frontend/src/context/AuthContext.jsx`
+- `frontend/src/pages/Login.jsx`
+- `frontend/src/pages/Register.jsx`
+
+Render must have both JWT variables set:
+
+```env
+JWT_SECRET=<secure random secret>
+JWT_REFRESH_SECRET=<different secure random secret>
+```
+
 ## Frontend to Backend Route Map
 
 | Frontend Action | Axios Call | Backend Route |

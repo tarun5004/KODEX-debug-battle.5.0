@@ -10,6 +10,14 @@ const refreshCookieOptions = {
   sameSite: isProduction ? 'none' : 'strict'
 };
 
+const requireAuthSecrets = () => {
+  if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
+    const error = new Error('JWT secrets are not configured on backend');
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
 // Generate Access Token (Short lived)
 const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -34,6 +42,9 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Please include all fields');
   }
+
+  // Dev note: JWT secret missing tha to user create ho raha tha but token nahi mil raha tha; pehle config validate karte hain.
+  requireAuthSecrets();
 
   // Check if user already exists
   const userExists = await User.findOne({ email });
@@ -78,6 +89,9 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  // Dev note: token generate karne se pehle JWT env check karna zaroori hai, warna frontend ko fake success milta hai.
+  requireAuthSecrets();
+
   const user = await User.findOne({ email });
 
   // Check user and password match using the model method
@@ -109,6 +123,9 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access  Public
 const refresh = asyncHandler(async (req, res) => {
   const cookies = req.cookies;
+
+  // Dev note: refresh bhi JWT secrets pe depend karta hai; missing env ko clear 500 error banana hai.
+  requireAuthSecrets();
 
   if (!cookies?.jwt) {
     res.status(401);

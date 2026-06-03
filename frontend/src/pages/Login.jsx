@@ -24,7 +24,7 @@ const Login = () => {
       await login(formData.email, formData.password);
       navigate('/profile');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || err.message || 'Login failed');
     }
   };
 
