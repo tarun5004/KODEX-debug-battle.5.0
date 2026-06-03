@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// Dev note: API URL hardcode tha; deploy pe backend URL change hota hai, isliye env se leke local fallback rakha.
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Dev note: deploy pe backend domain change hota hai; base origin env se lete hain aur API paths same rehte hain.
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const instance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/api`,
   withCredentials: true, // Required to send cookies
 });
 
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
       
       try {
         // Attempt to refresh token
-        const res = await axios.post(`${API_BASE_URL}/auth/refresh`, {}, { withCredentials: true });
+        const res = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {}, { withCredentials: true });
         
         // Save new access token
         localStorage.setItem('token', res.data.accessToken);

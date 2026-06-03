@@ -6,13 +6,10 @@ server/node_modules/
 # Environment variables
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
-frontend/.env
-frontend/.env.*
-!frontend/.env.example
-server/.env
-server/.env.*
-!server/.env.example
+!**/.env.example
 
 # Build outputs
 dist/

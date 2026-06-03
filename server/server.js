@@ -11,9 +11,10 @@ connectDB();
 
 const app = express();
 const port = process.env.PORT || 5000;
+const clientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173';
 
-// Dev note: browser Origin me trailing slash nahi hota; CORS ko exact Vite origin se match karaya.
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
+// Dev note: local Vite aur deployed Vercel URL dono CORS me env se handle ho sakein, isliye CLIENT_URL use kiya.
+app.use(cors({ origin: clientUrl, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
