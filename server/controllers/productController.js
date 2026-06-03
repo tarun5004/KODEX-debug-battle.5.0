@@ -15,7 +15,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const totalBaseStock = baseInventories.reduce((sum, inv) => sum + inv.quantity, 0);
     return {
       ...product.toObject(),
-      // Bug fix: filter returns an array, so sum base inventory instead of reading array.quantity.
+      // Dev note: filter array deta hai, single object nahi; isliye quantity nikalne ke liye base inventory rows ko sum kiya.
       stock: totalBaseStock,
       warehouse: baseInventories.length === 0 ? 'N/A' : baseInventories.length === 1 ? baseInventories[0].warehouse : `${baseInventories.length} warehouses`,
       inventoryId: baseInventories.length === 1 ? baseInventories[0]._id : null
@@ -46,7 +46,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
   if (!name || Number.isNaN(basePrice)) {
     res.status(400);
-    // Bug fix: variant products can derive base price from their first variant.
+    // Dev note: variant product me base price empty ho sakta hai; first variant price se product price derive kiya.
     throw new Error('Please add name and price');
   }
 
@@ -104,7 +104,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
   let totalStock = 0;
   if (hasVariants) {
-    // Bug fix: variant stock should be added, not subtracted into negative inventory.
+    // Dev note: variant stock add hona chahiye tha; minus karne se inventory negative ban rahi thi.
     totalStock = parsedVariants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0);
   } else {
     totalStock = initialStock !== undefined ? Number(initialStock) : 0;

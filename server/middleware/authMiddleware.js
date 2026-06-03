@@ -11,7 +11,7 @@ const protect = asyncHandler(async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      // Bug fix: access tokens are signed with JWT_SECRET, so verify with the same secret.
+      // Dev note: token sign JWT_SECRET se ho raha tha, verify alag secret se tha; dono same rakhe to auth pass hota hai.
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id).select('-password');
 

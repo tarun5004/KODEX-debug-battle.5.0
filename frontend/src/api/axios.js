@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Bug fix: use the configured API URL when present, otherwise fall back to local Express.
+// Dev note: API URL hardcode tha; deploy pe backend URL change hota hai, isliye env se leke local fallback rakha.
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const instance = axios.create({

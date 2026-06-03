@@ -93,7 +93,7 @@ const Dashboard = () => {
 
   const showToast = (message, type = 'success') => {
     const id = Math.random().toString(36).substr(2, 9);
-    // Bug fix: avoid mutating toast state so React renders each notification.
+    // Dev note: pehle array ko direct mutate kar rahe the; React ko naya array dene se toast reliably render hota hai.
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -151,7 +151,7 @@ const Dashboard = () => {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
-      // Bug fix: failed requests should stop the spinner and let the user retry.
+      // Dev note: API fail hone par spinner stuck tha; catch me loading false karke user ko retry/toast dikhate hain.
       setLoading(false);
       showToast(err.response?.data?.message || 'Failed to load dashboard data', 'destructive');
     }
@@ -223,14 +223,14 @@ const Dashboard = () => {
       formData.append('category', newProduct.category);
       formData.append('initialStock', newProduct.initialStock);
       formData.append('warehouse', newProduct.warehouse);
-      // Bug fix: backend expects variants as JSON, not "[object Object]".
+      // Dev note: FormData me object direct bhejne se "[object Object]" ja raha tha; backend JSON.parse karta hai, isliye JSON string bheji.
       formData.append('variants', JSON.stringify(productVariants));
 
       if (productImage) {
         formData.append('image', productImage);
       }
 
-      // Bug fix: server mounts product routes at /api/products.
+      // Dev note: server.js me route /api/products mounted hai; singular /product se 404 aa raha tha.
       await axios.post('/products', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -308,7 +308,7 @@ const Dashboard = () => {
           quantity: Number(item.quantity)
         }))
       };
-      // Bug fix: server mounts order routes at /api/orders.
+      // Dev note: order route bhi plural /api/orders hai; frontend URL ko backend route ke saath match kiya.
       const response = await axios.post('/orders', payload);
       showToast(`Order ${response.data.orderNumber} created successfully.`, 'success');
       setShowOrderModal(false);
@@ -333,7 +333,7 @@ const Dashboard = () => {
 
     const selectedInventoryProduct = products.find(p => p._id === newInventory.productId);
     if (selectedInventoryProduct?.variants?.length > 0 && !newInventory.variantSku) {
-      // Bug fix: variant products need a variant SKU; base stock is recalculated by backend.
+      // Dev note: variant product me stock variant level pe manage hota hai; base stock backend sum karta hai, isliye variant select karwana zaroori hai.
       showToast('Please select a variant before adjusting stock for this product.', 'warning');
       return;
     }
@@ -411,7 +411,7 @@ const Dashboard = () => {
     .filter(o => o.status !== 'Cancelled')
     .reduce((sum, o) => sum + o.totalAmount, 0);
 
-  // Bug fix: base inventory already sums variant rows, so dashboard totals should not double-count variants.
+  // Dev note: base inventory already variants ka total rakhta hai; variant rows dobara count karne se dashboard stock double ho raha tha.
   const summaryInventory = inventory.filter(i => !i.variantSku);
   const totalStockItems = summaryInventory.reduce((sum, i) => sum + i.quantity, 0);
   const lowStockCount = summaryInventory.filter(i => i.quantity > 0 && i.quantity < 10).length;
@@ -1588,7 +1588,7 @@ const Dashboard = () => {
                     <SelectValue placeholder="Choose variant SKU..." />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-950 border-zinc-900 text-slate-200">
-                    {/* Bug fix: Radix Select items cannot use an empty string value. */}
+                    {/* Dev note: Radix Select empty string value allow nahi karta; blank base option hata diya so dropdown crash na kare. */}
                     {products.find(p => p._id === newInventory.productId).variants.map(v => (
                       <SelectItem key={v.sku} value={v.sku}>
                         {v.sku} ({v.size || ''}{v.size && v.color ? '/' : ''}{v.color || ''})

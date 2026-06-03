@@ -54,7 +54,7 @@ const createOrder = asyncHandler(async (req, res) => {
           throw new Error(`Variant SKU ${variantSku} not found for product ${product.name}`);
         }
 
-        // Bug fix: reject only when stock is below the requested quantity.
+        // Dev note: condition ulta tha; order tab reject hona chahiye jab available stock requested qty se kam ho.
         if (variant.stock < quantityNum) {
           res.status(400);
           throw new Error(`Insufficient stock for variant ${variantSku} of ${product.name}. Available: ${variant.stock}`);
@@ -126,7 +126,7 @@ const createOrder = asyncHandler(async (req, res) => {
           }
         }
 
-        // Bug fix: reject only when base stock is below the requested quantity.
+        // Dev note: base product ke liye bhi wahi rule hai: available stock qty se kam ho tabhi insufficient stock.
         if (!inventoryRecord || inventoryRecord.quantity < quantityNum) {
           res.status(400);
           throw new Error(`Insufficient stock for product: ${product.name}. Available: ${inventoryRecord ? inventoryRecord.quantity : 0}`);
@@ -143,7 +143,7 @@ const createOrder = asyncHandler(async (req, res) => {
         });
       }
 
-      // Bug fix: order totals must include quantity, not just one unit price.
+      // Dev note: total me sirf unit price add ho raha tha; quantity multiply karna zaroori hai.
       totalAmount += itemPrice * quantityNum;
     }
 
@@ -173,7 +173,7 @@ const createOrder = asyncHandler(async (req, res) => {
     const populatedOrder = await Order.findById(order._id).populate('items.product');
     res.status(201).json(populatedOrder);
   } catch (error) {
-    // Bug fix: preserve validation/business errors instead of masking them as a fake 500.
+    // Dev note: fake 500 message se asli problem chhup rahi thi; original validation/business error ko pass through kiya.
     throw error;
   }
 });

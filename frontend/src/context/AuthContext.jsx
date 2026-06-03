@@ -26,14 +26,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await axios.post('/auth/login', { email, password });
-    // Bug fix: backend returns accessToken, so store that value for Bearer auth.
+    // Dev note: authController me response accessToken naam se aa raha tha; token store karne se auth header empty ho raha tha.
     localStorage.setItem('token', response.data.accessToken);
     setUser(response.data);
   };
 
   const register = async (username, email, password) => {
     const response = await axios.post('/auth/register', { username, email, password });
-    // Bug fix: backend returns accessToken, so new accounts can call protected APIs.
+    // Dev note: register ke baad bhi same accessToken store karna zaroori hai, warna protected dashboard call fail hoti hai.
     localStorage.setItem('token', response.data.accessToken);
     setUser(response.data);
   };

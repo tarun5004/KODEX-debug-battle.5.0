@@ -68,7 +68,7 @@ const Login = () => {
               <Input
                 id="password"
                 type="password"
-                // Bug fix: keep the input name aligned with formData.password used on submit.
+                // Dev note: yaha name pehle pass tha, but submit formData.password bhej raha tha; isliye typed password save hi nahi ho raha tha.
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
