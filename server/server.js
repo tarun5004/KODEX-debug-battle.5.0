@@ -12,10 +12,20 @@ connectDB();
 const app = express();
 const port = process.env.PORT || 5000;
 const localClientUrl = 'http://localhost:5173';
-const allowedOrigins = [localClientUrl, process.env.CLIENT_URL, process.env.FRONTEND_URL]
-  .filter((origin, index, origins) => origin && origins.indexOf(origin) === index);
+const liveClientUrl = 'https://kodex-debug-battle-5-0.vercel.app';
+const placeholderOrigins = new Set(['https://your-frontend.vercel.app', 'https://your-vercel-app.vercel.app']);
+const parseOrigins = (value) => (value || '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(origin => origin && !placeholderOrigins.has(origin));
+const allowedOrigins = [
+  localClientUrl,
+  liveClientUrl,
+  ...parseOrigins(process.env.CLIENT_URL),
+  ...parseOrigins(process.env.FRONTEND_URL)
+].filter((origin, index, origins) => origins.indexOf(origin) === index);
 
-// Dev note: pehle CORS sirf ek origin allow kar raha tha; ab local Vite aur deployed CLIENT_URL dono safely allow hote hain.
+// Dev note: Render me CLIENT_URL placeholder reh gaya tha; exact live Vercel URL ko allowlist me rakha aur placeholder ignore kiya.
 app.use(cors({
   origin(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {

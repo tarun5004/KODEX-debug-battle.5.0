@@ -43,7 +43,7 @@ const Register = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
             {error && (
               <div className="rounded-md bg-red-50 p-3 text-sm text-red-500 border border-red-200">
                 {error}
@@ -55,6 +55,7 @@ const Register = () => {
                 id="username"
                 type="text"
                 name="username"
+                autoComplete="username"
                 placeholder="johndoe"
                 value={formData.username}
                 onChange={handleChange}
@@ -67,6 +68,7 @@ const Register = () => {
                 id="email"
                 type="email"
                 name="email"
+                autoComplete="email"
                 placeholder="m@example.com"
                 value={formData.email}
                 onChange={handleChange}
@@ -79,6 +81,7 @@ const Register = () => {
                 id="password"
                 type="password"
                 name="password"
+                autoComplete="new-password"
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={handleChange}

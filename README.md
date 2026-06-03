@@ -273,6 +273,47 @@ CLIENT_URL=https://kodex-debug-battle-5-0.vercel.app
 
 Local `server/.env` was updated with this value, but real `.env` files are ignored and must not be committed.
 
+### 19. Render CORS placeholder mismatch
+
+The live browser error showed this mismatch:
+
+```txt
+Origin: https://kodex-debug-battle-5-0.vercel.app
+Access-Control-Allow-Origin: https://your-frontend.vercel.app
+```
+
+That means the deployed backend was still sending a placeholder frontend URL. The backend CORS allowlist now:
+
+- Always allows the exact live Vercel frontend URL.
+- Allows local Vite on `http://localhost:5173`.
+- Allows comma-separated values from `CLIENT_URL` and `FRONTEND_URL`.
+- Ignores placeholder values like `https://your-frontend.vercel.app`.
+
+Render should still be updated manually with:
+
+```env
+CLIENT_URL=https://kodex-debug-battle-5-0.vercel.app
+```
+
+File touched:
+
+- `server/server.js`
+
+### 20. Browser autocomplete warning on auth forms
+
+The browser showed an autocomplete warning on the register page. The auth forms now include proper autocomplete hints:
+
+- Register username: `username`
+- Register email: `email`
+- Register password: `new-password`
+- Login email: `email`
+- Login password: `current-password`
+
+Files touched:
+
+- `frontend/src/pages/Register.jsx`
+- `frontend/src/pages/Login.jsx`
+
 ## Frontend to Backend Route Map
 
 | Frontend Action | Axios Call | Backend Route |
@@ -298,6 +339,7 @@ Frontend:
 - `frontend/src/api/axios.js`
 - `frontend/src/context/AuthContext.jsx`
 - `frontend/src/pages/Login.jsx`
+- `frontend/src/pages/Register.jsx`
 - `frontend/src/pages/Dashboard.jsx`
 - `frontend/src/pages/Profile.jsx`
 - `frontend/vite.config.js`

@@ -43,7 +43,7 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
             {error && (
               <div className="rounded-md bg-red-50 p-3 text-sm text-red-500 border border-red-200">
                 {error}
@@ -55,6 +55,7 @@ const Login = () => {
                 id="email"
                 type="email"
                 name="email"
+                autoComplete="email"
                 placeholder="m@example.com"
                 value={formData.email}
                 onChange={handleChange}
@@ -70,6 +71,7 @@ const Login = () => {
                 type="password"
                 // Dev note: yaha name pehle pass tha, but submit formData.password bhej raha tha; isliye typed password save hi nahi ho raha tha.
                 name="password"
+                autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
                 required
